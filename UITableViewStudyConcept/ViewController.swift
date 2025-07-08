@@ -8,6 +8,7 @@
 import UIKit
 
 class ViewController: UIViewController {
+    private let cellID = "cell"
     private let tableView = UITableView()
     private let items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"]
     
@@ -19,16 +20,55 @@ class ViewController: UIViewController {
     }
 }
 
+// MARK: - TableView view setup -
+extension ViewController {
+    private func setupTableView() {
+        self.view.addSubview(tableView)
+        
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+        
+        self.tableView.register(
+            UITableViewCell.self,
+            forCellReuseIdentifier: self.cellID
+        )
+        
+        self.setupTableViewConstrains()
+    }
+    
+    private func setupTableViewConstrains() {
+        self.tableView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.tableView.topAnchor.constraint(
+                equalTo: self.view.safeAreaLayoutGuide.topAnchor
+            ),
+            self.tableView.leftAnchor.constraint(
+                equalTo: self.view.leftAnchor
+            ),
+            self.tableView.rightAnchor.constraint(
+                equalTo: view.rightAnchor
+            ),
+            self.tableView.bottomAnchor.constraint(
+                equalTo: self.view.bottomAnchor
+            )
+        ])
+    }
+}
+
+// MARK: - Table View Configuration -
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+        return self.items.count
     }
     
     func tableView(
         _ tableView: UITableView,
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: self.cellID,
+            for: indexPath
+        )
         var content = cell.defaultContentConfiguration()
         content.text = items[indexPath.row]
         cell.contentConfiguration = content
@@ -45,29 +85,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             animated: true
         )
         
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-}
-
-extension ViewController {
-    private func setupTableView() {
-        view.addSubview(tableView)
-        
-        // Configurar delegate e datasource
-        tableView.delegate = self
-        tableView.dataSource = self
-        
-        // Registrar uma célula padrão
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        
-        // Ativar Auto Layout manualmente (view code)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        self.tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
